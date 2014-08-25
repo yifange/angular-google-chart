@@ -84,7 +84,8 @@
                     chart: '=chart',
                     onReady: '&',
                     onSelect: '&',
-                    select: '&'
+                    select: '&',
+                    chartClass: '@'
                 },
                 link: function ($scope, $elm, $attrs) {
                     /* Watches, to refresh the chart when its data, formatters, options, view,
@@ -108,13 +109,19 @@
                     }, true); // true is for deep object equality checking
 
                     // Redraw the chart if the window is resized
-                    var resizeHandler = $rootScope.$on('resizeMsg', function () {
-                        $timeout(function () {
-                            // Not always defined yet in IE so check
-                            if($scope.chartWrapper) {
-                                drawAsync();
-                            }
-                        });
+                    var resizeHandler = $rootScope.$on('resizeMsg', function (event, chartClass) {
+                        var resize = true;
+                        if (chartClass != undefined && $scope.chartClass != chartClass) {
+                            resize = false;
+                        }
+                        if (resize) {
+                            $timeout(function () {
+                                // Not always defined yet in IE so check
+                                if($scope.chartWrapper) {
+                                    drawAsync();
+                                }
+                            });
+                        }
                     });
 
                     //Cleanup resize handler.
